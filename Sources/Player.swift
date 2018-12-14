@@ -437,7 +437,11 @@ extension Player {
     fileprivate func play() {
         if self.autoplay || self._hasAutoplayActivated {
             self.playbackState = .playing
-            self._avplayer.play()
+            if #available(iOS 10.0, *) {
+                self._avplayer.playImmediately(atRate: 1)
+            } else {
+                self._avplayer.play()
+            }
         }
     }
 
