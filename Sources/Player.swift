@@ -316,6 +316,17 @@ open class Player: UIViewController {
         }
     }
 
+    /// A Boolean value that indicates whether the player should automatically delay playback in order to minimize stalling.
+    @available(iOS 10.0, tvOS 10.0, *)
+    var automaticallyWaitsToMinimizeStalling: Bool {
+        get {
+            return self._avplayer.automaticallyWaitsToMinimizeStalling
+        }
+        set {
+            self._avplayer.automaticallyWaitsToMinimizeStalling = newValue
+        }
+    }
+
     // MARK: - private instance vars
 
     internal var _asset: AVAsset? {

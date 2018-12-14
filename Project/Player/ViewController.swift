@@ -50,6 +50,9 @@ class ViewController: UIViewController {
         self.player.playbackDelegate = self
         
         self.player.playerView.playerBackgroundColor = .black
+        if #available(iOS 10.0, *) {
+            self.player.automaticallyWaitsToMinimizeStalling = false
+        }
         
         self.addChild(self.player)
         self.view.addSubview(self.player.view)
