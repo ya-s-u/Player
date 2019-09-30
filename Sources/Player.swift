@@ -520,6 +520,8 @@ extension Player {
                 case .failed:
                     fallthrough
                 case .cancelled:
+                    fallthrough
+                @unknown default:
                     DispatchQueue.main.async {
                         completionHandler?(nil, nil)
                     }
@@ -734,34 +736,35 @@ extension Player {
         })
 
         self._playerItemObservers.append(playerItem.observe(\.isPlaybackLikelyToKeepUp, options: [.new, .old]) { [weak self] (object, change) in
+            guard let strongSelf = self else {
+                return
+            }
+            
             if object.isPlaybackLikelyToKeepUp {
-                self?.bufferingState = .ready
-                if self?.playbackState == .playing {
-                    self?.playFromCurrentTime()
+                strongSelf.bufferingState = .ready
+                if strongSelf.playbackState == .playing {
+                    strongSelf.playFromCurrentTime()
                 }
             }
 
             switch object.status {
+            case .failed:
+                strongSelf.playbackState = PlaybackState.failed
+                break
             case .unknown:
                 fallthrough
             case .readyToPlay:
-                self?._playerView.player = self?._avplayer
-                break
-            case .failed:
-                self?.playbackState = PlaybackState.failed
+                fallthrough
+            @unknown default:
+                strongSelf._playerView.player = self?._avplayer
                 break
             }
         })
-
-//        self._playerItemObservers.append(playerItem.observe(\.status, options: [.new, .old]) { (object, change) in
-//        })
 
         self._playerItemObservers.append(playerItem.observe(\.loadedTimeRanges, options: [.new, .old]) { [weak self] (object, change) in
             guard let strongSelf = self else {
                 return
             }
-
-            strongSelf.bufferingState = .ready
 
             let timeRanges = object.loadedTimeRanges
             if let timeRange = timeRanges.first?.timeRangeValue {
@@ -828,6 +831,8 @@ extension Player {
                 case .playing:
                     self?.playbackState = .playing
                 case .waitingToPlayAtSpecifiedRate:
+                    fallthrough
+                @unknown default:
                     break
                 }
             })
