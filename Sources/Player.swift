@@ -327,6 +327,15 @@ open class Player: UIViewController {
         }
     }
 
+    open var avplayer: AVPlayer {
+        get {
+            return _avplayer
+        }
+        set {
+            _avplayer = newValue
+        }
+    }
+
     // MARK: - private instance vars
 
     internal var _asset: AVAsset? {
